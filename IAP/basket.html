@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basket Page</title>
+    <style>
+        /* Reset Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            color: #333;
+        }
+
+        /* Basket Container */
+        #basket-container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        #basket-container h2 {
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table th,
+        table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f7f7f7;
+        }
+
+        table td:last-child {
+            text-align: center;
+        }
+
+        /* Buttons */
+        button {
+            padding: 8px 12px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .btn-remove {
+            background-color: #dc3545;
+        }
+
+        .btn-remove:hover {
+            background-color: #c82333;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+
+            table th,
+            table td {
+                display: block;
+                text-align: right;
+            }
+
+            table td {
+                padding-left: 50%;
+                position: relative;
+            }
+
+            table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                text-align: left;
+                font-weight: bold;
+            }
+
+            table th {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Your Basket</h1>
+    </header>
+    <div id="basket-container">
+        <h2>Items in Your Basket</h2>
+        <table id="basket-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Basket items will be dynamically added here -->
+            </tbody>
+        </table>
+        <p><strong>Total Price:</strong> Ksh <span id="total-price">0</span></p>
+        <button id="checkout-button">Checkout</button>
+    </div>
+
+    <script>
+        const basket = [];
+
+        // Add item to basket (sample items for testing)
+        function addToBasket(item) {
+            const existingItem = basket.find(i => i.id === item.id);
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                basket.push({ ...item, quantity: 1 });
+            }
+            updateBasket();
+        }
+
+        // Update basket UI
+        function updateBasket() {
+            const basketTableBody = document.querySelector('#basket-table tbody');
+            const totalPriceElement = document.getElementById('total-price');
+
+            // Update table
+            basketTableBody.innerHTML = basket.map(item => `
+        <tr>
+          <td data-label="Item">${item.name}</td>
+          <td data-label="Quantity">${item.quantity}</td>
+          <td data-label="Price">${item.price * item.quantity}</td>
+          <td data-label="Actions">
+            <button class="btn-remove" onclick="removeFromBasket('${item.id}')">Remove</button>
+          </td>
+        </tr>
+      `).join('');
+
+            // Update total price
+            const totalPrice = basket.reduce((total, item) => total + item.price * item.quantity, 0);
+            totalPriceElement.textContent = totalPrice.toFixed(2);
+        }
+
+        // Remove item from basket
+        function removeFromBasket(itemId) {
+            const index = basket.findIndex(item => item.id === itemId);
+            if (index > -1) basket.splice(index, 1);
+            updateBasket();
+        }
+
+        // Example items to add to basket (for testing)
+        addToBasket({ id: '1', name: 'Item 1', price: 200 });
+        addToBasket({ id: '2', name: 'Item 2', price: 200 });
+        addToBasket({ id: '3', name: 'Item 3', price: 300 });
+    </script>
+</body>
+
+</html>
